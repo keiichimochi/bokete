@@ -24,9 +24,10 @@ litellm.api_key = openai_api_key
 #model_options = ["claude-3-haiku-20240307","gpt-4o-mini", "claude-3-5-sonnet-20240620", "gemini-pro-vision"]
 #selected_model = st.selectbox("使用するモデルを選択してください", model_options)
 
-# 機能選択のためのセレクタを追加
 function_options = ["ボケて", "褒めて", "ニックネームつけて"]
-selected_function = st.selectbox("機能を選択してください", function_options)
+selected_function = st.radio("機能を選択してください", function_options)
+#function_options = ["ボケて", "褒めて", "ニックネームつけて"]
+#selected_function = st.selectbox("機能を選択してください", function_options)
 
 def generate_response(image):
     # 画像をbase64エンコード
@@ -105,8 +106,8 @@ if image_source == "ファイルアップロード":
         image = Image.open(uploaded_file)
         image, original_size, compressed_size = compress_image(image)  # 画像を圧縮
         st.image(image, caption='アップロードした写真', use_column_width=True)
-        st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
-        st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
+     #   st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
+      #  st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
         response = generate_response(image)
         if response:
             st.write(response)
@@ -116,8 +117,8 @@ elif image_source == "カメラ撮影":
     if camera_image is not None:
         image = Image.open(camera_image)
         image, original_size, compressed_size = compress_image(image)  # 画像を圧縮
-        st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
-        st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
+      #  st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
+     #   st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
         response = generate_response(image)
         if response:
             st.write(response)
