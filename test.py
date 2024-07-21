@@ -6,11 +6,11 @@ import base64
 from io import BytesIO
 
 # モデル選択のためのセレクタを追加
-model_options = ["claude-3-haiku-20240307","gpt-4o-mini", "claude-3-5-sonnet-20240620", "gemini-pro-vision"]
-selected_model = st.selectbox("使用するモデルを選択してください", model_options)
+#model_options = ["claude-3-haiku-20240307","gpt-4o-mini", "claude-3-5-sonnet-20240620", "gemini-pro-vision"]
+#selected_model = st.selectbox("使用するモデルを選択してください", model_options)
 
 # 機能選択のためのセレクタを追加
-function_options = ["ボケる", "褒める", "ニックネームつける"]
+function_options = ["ボケて", "褒めて", "ニックネームつけて"]
 selected_function = st.selectbox("機能を選択してください", function_options)
 
 def generate_response(image):
@@ -30,7 +30,8 @@ def generate_response(image):
 
         # litellmを使用してボケ/褒めを生成
         response = completion(
-            model=selected_model,  # 選択されたモデルを使用
+ #           model=selected_model,  # 選択されたモデルを使用
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
@@ -56,7 +57,7 @@ def generate_response(image):
         st.error(f"エラーが発生しました: {e}")
         return None
 
-st.title("ボケる/褒めるAI")
+st.title("ボケて褒めてニックネームつけて")
 
 # 画像ソースの選択
 image_source = st.radio("画像ソースを選択してください", ["カメラ撮影", "ファイルアップロード"])
