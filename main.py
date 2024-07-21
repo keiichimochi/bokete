@@ -6,8 +6,8 @@ import base64
 from io import BytesIO
 import os
 
-# 環境変数からAPIキーを取得
-openai_api_key = os.getenv("OPENAI_API_KEY")
+# シークレットからAPIキーを取得
+openai_api_key = st.secrets["api"]["OPENAI_API_KEY"]
 
 if openai_api_key is None:
     raise ValueError("OpenAI APIキーが設定されていません。")
