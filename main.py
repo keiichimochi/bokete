@@ -10,7 +10,7 @@ from io import BytesIO
 #selected_model = st.selectbox("使用するモデルを選択してください", model_options)
 
 # 機能選択のためのセレクタを追加
-function_options = ["ボケる", "褒める", "ニックネームつける"]
+function_options = ["ボケて", "褒めて", "ニックネームつけて"]
 selected_function = st.selectbox("機能を選択してください", function_options)
 
 def generate_response(image):
