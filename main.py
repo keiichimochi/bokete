@@ -30,9 +30,9 @@ def generate_response(image):
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     try:
-        if selected_function == "ボケる":
+        if selected_function == "ボケて":
             user_prompt = "この写真についておかしな例えでボケてください。"
-        elif selected_function == "褒める":
+        elif selected_function == "褒めて":
 
             user_prompt = "この写真についてハイテンションで褒めてください。"
         else: # ニックネームつける
