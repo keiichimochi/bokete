@@ -115,10 +115,10 @@ def generate_response(image):
             max_tokens=100  # 応答の最大トークン数を設定
         )
         if response and response.choices:
-            ai_response = response.choices[0].message.content
+        #    ai_response = response.choices[0].message.content
 
 
-            text_to_speech(ai_response)  
+        #    text_to_speech(ai_response)  
             return response.choices[0].message.content
         else:
             return "AIからの返答がありませんでした。"
