@@ -42,9 +42,10 @@ def text_to_speech(text):
     
     if response.ok:
         audio_data = BytesIO(response.content)
-        st.audio(audio_data, format="audio/mp3")
-        st.markdown("音声を再生するには上のプレイヤーを使用してください。")
-        print("音声出力が成功しました。")
+        if st.button("音声を再生"):  # ユーザーが音声再生を許可するボタン
+            st.audio(audio_data, format="audio/mp3")  # 音声を再生
+     #   st.markdown("音声を再生するには上のプレイヤーを使用してください。")
+     #   print("音声出力が成功しました。")
     else:
         st.error("音声の生成中にエラーが発生しました。")
         print(response.text)
