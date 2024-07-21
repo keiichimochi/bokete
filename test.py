@@ -6,9 +6,13 @@ import base64
 from io import BytesIO
 import os
 from PIL import ImageOps  # 画像処理のためのライブラリをインポート
+import requests  # requestsライブラリをインポート
 
+st.title("ボケて褒めてニックネームつけて")
 # シークレットからAPIキーを取得
 openai_api_key = st.secrets["api"]["OPENAI_API_KEY"]
+xi_api_key = st.secrets["api"]["XI_API_KEY"]
+VOICE_ID = "jsCqWAovK2LkecY7zXl4"
 
 if openai_api_key is None:
     raise ValueError("OpenAI APIキーが設定されていません。")
@@ -18,15 +22,62 @@ litellm.api_key = openai_api_key
 
 
 
+def text_to_speech(text):
+    # テキストを音声に変換する関数
+    tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream"
+    headers = {
+        "Accept": "application/json",
+        "xi-api-key": xi_api_key
+    }
+    data = {
+        "text": text,
+        "model_id": "eleven_multilingual_v2",
+        "voice_settings": {
+            "stability": 0.1,
+            "similarity_boost": 0.8
+        }
+    }
+    
+    response = requests.post(tts_url, headers=headers, json=data, stream=True)
+    
+    if response.ok:
+        audio_data = BytesIO(response.content)
+        st.audio(audio_data, format="audio/mp3")
+        st.markdown("音声を再生するには上のプレイヤーを使用してください。")
+        print("音声出力が成功しました。")
+    else:
+        st.error("音声の生成中にエラーが発生しました。")
+        print(response.text)
 
+    # ブラウザ互換性のための JavaScript
+    st.markdown(
+        """
+        <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const audioElements = document.getElementsByTagName('audio');
+            if (audioElements.length > 0) {
+                const latestAudio = audioElements[audioElements.length - 1];
+                latestAudio.oncanplaythrough = () => {
+                    console.log('Audio can play through.');
+                };
+                latestAudio.onerror = (e) => {
+                    console.error('Error loading audio:', e);
+                };
+            }
+        });
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
 
 # モデル選択のためのセレクタを追加
 #model_options = ["claude-3-haiku-20240307","gpt-4o-mini", "claude-3-5-sonnet-20240620", "gemini-pro-vision"]
 #selected_model = st.selectbox("使用するモデルを選択してください", model_options)
 
-# 機能選択のためのセレクタを追加
 function_options = ["ボケて", "褒めて", "ニックネームつけて"]
-selected_function = st.selectbox("機能を選択してください", function_options)
+selected_function = st.radio("機能を選択してください", function_options)
+#function_options = ["ボケて", "褒めて", "ニックネームつけて"]
+#selected_function = st.selectbox("機能を選択してください", function_options)
 
 def generate_response(image):
     # 画像をbase64エンコード
@@ -60,9 +111,14 @@ def generate_response(image):
                     ]
                 }
             ],
-            max_tokens=200  # 応答の最大トークン数を設定
+            #max_tokens=200  # 応答の最大トークン数を設定
+            max_tokens=100  # 応答の最大トークン数を設定
         )
         if response and response.choices:
+            ai_response = response.choices[0].message.content
+
+
+            text_to_speech(ai_response)  
             return response.choices[0].message.content
         else:
             return "AIからの返答がありませんでした。"
@@ -72,7 +128,7 @@ def generate_response(image):
         st.error(f"エラーが発生しました: {e}")
         return None
 
-st.title("ボケて褒めてニックネームつけて")
+
 
 # 画像ソースの選択
 image_source = st.radio("画像ソースを選択してください", ["カメラ撮影", "ファイルアップロード"])
@@ -105,8 +161,8 @@ if image_source == "ファイルアップロード":
         image = Image.open(uploaded_file)
         image, original_size, compressed_size = compress_image(image)  # 画像を圧縮
         st.image(image, caption='アップロードした写真', use_column_width=True)
-        st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
-        st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
+     #   st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
+      #  st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
         response = generate_response(image)
         if response:
             st.write(response)
@@ -116,8 +172,8 @@ elif image_source == "カメラ撮影":
     if camera_image is not None:
         image = Image.open(camera_image)
         image, original_size, compressed_size = compress_image(image)  # 画像を圧縮
-        st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
-        st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
+      #  st.write(f"元の画像サイズ: {original_size / 1024:.2f} KB")  # 元のサイズを表示
+     #   st.write(f"圧縮後の画像サイズ: {compressed_size / 1024:.2f} KB")  # 圧縮後のサイズを表示
         response = generate_response(image)
         if response:
             st.write(response)
