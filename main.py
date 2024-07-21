@@ -4,6 +4,16 @@ import litellm
 from litellm import completion
 import base64
 from io import BytesIO
+import os
+
+# 環境変数からAPIキーを取得
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+if openai_api_key is None:
+    raise ValueError("OpenAI APIキーが設定されていません。")
+
+# APIキーをlitellmに設定
+litellm.api_key = openai_api_key
 
 # モデル選択のためのセレクタを追加
 #model_options = ["claude-3-haiku-20240307","gpt-4o-mini", "claude-3-5-sonnet-20240620", "gemini-pro-vision"]
